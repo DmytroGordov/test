@@ -54,8 +54,9 @@ jobs:
       - name: Add prefix to BFF url
         if: ${{ github.event.inputs.qaEnvironmentPrefix }}
         run: |
-          VERTICAL_FILTER_BFF_URL=$(echo "$VERTICAL_FILTER_BFF_URL" | sed "s/https:\/\//https:\/\/${github.event.inputs.qaEnvironmentPrefix}-/")
+          VERTICAL_FILTER_BFF_URL=$(echo "$VERTICAL_FILTER_BFF_URL" | sed "s/https:\/\//https:\/\/${{ github.event.inputs.qaEnvironmentPrefix }}-/")
           echo "VERTICAL_FILTER_BFF_URL=$VERTICAL_FILTER_BFF_URL" >> "$GITHUB_ENV"
+
 
       - name: Test
         run: echo $VERTICAL_FILTER_BFF_URL
