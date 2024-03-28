@@ -54,7 +54,7 @@ jobs:
           path: workload.json
 
       - name: Add prefix to BFF url
-        if: ${{ github.event.inputs.qaEnvironmentPrefix }}
+        if: ${{ github.event.inputs.qaEnvironmentPrefix && github.event.inputs.environmentName == 'qa'}}
         run: |
           VERTICAL_FILTER_BFF_URL=$(echo "$VERTICAL_FILTER_BFF_URL" | sed "s/https:\/\//https:\/\/${{ github.event.inputs.qaEnvironmentPrefix }}-/")
           echo "VERTICAL_FILTER_BFF_URL=$VERTICAL_FILTER_BFF_URL" >> "$GITHUB_ENV"
