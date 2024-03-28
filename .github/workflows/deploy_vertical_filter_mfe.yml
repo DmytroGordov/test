@@ -33,6 +33,8 @@ env:
   AZURE_APP_NAME: 'verticalfilter' # set this to your application"s name
   PACKAGE_PATH: './packages/vertical-filter' # set this to the path to your web app project, defaults to the repository root
   PACKAGE_BUILD_FOLDER: 'build'
+  VERTICAL_FILTER_BFF_URL: 'https://api-tst.jdadelivers.com/lui-dev/verticalFilterBff/v1'
+
 jobs:
   deploy:
     name: Build and deploy
