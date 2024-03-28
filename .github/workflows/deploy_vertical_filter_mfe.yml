@@ -1,0 +1,59 @@
+name: Deploy Vertical filter MFE to Azure
+
+on:
+  push:
+    paths:
+      - '/packages/vertical-filter/**'
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      environmentName:
+        description: 'Environment name'
+        type: choice
+        default: pldna
+        options:
+          - pldna
+          - qa
+          - pltna
+          - pltpsr
+          - plrtna
+          - plpstgna
+          - plpeu
+        required: true
+      commitHash:
+        description: 'Commit Hash'
+        required: false
+      qaEnvironmentPrefix:
+        description: 'Prefix for BFF url'
+        type: string
+        required: false
+
+env:
+  AZURE_APP_NAME: 'verticalfilter' # set this to your application"s name
+  PACKAGE_PATH: './packages/vertical-filter' # set this to the path to your web app project, defaults to the repository root
+  PACKAGE_BUILD_FOLDER: 'build'
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display debug info
+        run: |
+          cp "$GITHUB_EVENT_PATH" workload.json
+          echo "BRANCH_NAME: ${{ github.head_ref || github.ref_name }}"
+          echo "DEPLOY_ENV: ${{github.event.inputs.environmentName}}"
+          echo "COMMIT_HASH: ${{github.event.inputs.commitHash}}"
+
+      - name: Store debug info
+        uses: actions/upload-artifact@v3
+        with:
+          name: workflow-payload
+          path: workload.json
+
+      - name: Add prefix to BFF url
+        if: ${{ github.event.inputs.qaEnvironmentPrefix }}
+        run: echo "VERTICAL_FILTER_BFF_URL=$(echo "env.VERTICAL_FILTER_BFF_URL" | sed "s/https://\/https://${github.event.inputs.qaEnvironmentPrefix}-/g")" >> "$GITHUB_ENV"
+
+      - name: Test
+        run: echo $VERTICAL_FILTER_BFF_URL
